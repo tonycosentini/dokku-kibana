@@ -62,8 +62,8 @@ service_exposed_ports() {
   local PORT_FILE="$SERVICE_ROOT/PORT"
   [[ ! -f $PORT_FILE ]] && echo '-' && return 0
   local PORTS=($(cat "$PORT_FILE"))
-  for (( i=0; i < ${#PLUGIN_DATASTORE_PORTS[@]}; i++ )); do
-    echo -n "${PLUGIN_DATASTORE_PORTS[i]}->${PORTS[i]} "
+  for (( i=0; i < ${#PLUGIN_FRONTEND_PORTS[@]}; i++ )); do
+    echo -n "${PLUGIN_FRONTEND_PORTS[i]}->${PORTS[i]} "
   done
 }
 
@@ -188,10 +188,10 @@ service_port_unpause() {
   local PORT_FILE="$SERVICE_ROOT/PORT"
   local LOG_FAIL="$2"
   local PORTS=(${@:3})
-  PORTS=(${PORTS[@]:-$(get_random_ports ${#PLUGIN_DATASTORE_PORTS[@]})})
+  PORTS=(${PORTS[@]:-$(get_random_ports ${#PLUGIN_FRONTEND_PORTS[@]})})
   local ID=$(cat "$SERVICE_ROOT/ID")
 
-  [[ "${#PORTS[@]}" != "${#PLUGIN_DATASTORE_PORTS[@]}" ]] && dokku_log_fail "${#PLUGIN_DATASTORE_PORTS[@]} ports to be exposed need to be provided"
+  [[ "${#PORTS[@]}" != "${#PLUGIN_FRONTEND_PORTS[@]}" ]] && dokku_log_fail "${#PLUGIN_FRONTEND_PORTS[@]} ports to be exposed need to be provided"
 
   if [[ "$LOG_FAIL" == "true" ]]; then
     [[ -f "$PORT_FILE" ]] && PORTS=($(cat "$PORT_FILE")) && dokku_log_fail "Service $SERVICE already exposed on port(s) ${PORTS[*]}"
@@ -210,8 +210,8 @@ service_port_unpause() {
 
 docker_ports_options() {
   local PORTS=("$@")
-  for (( i=0; i < ${#PLUGIN_DATASTORE_PORTS[@]}; i++ )); do
-    echo -n "-p ${PORTS[i]}:${PLUGIN_DATASTORE_PORTS[i]} "
+  for (( i=0; i < ${#PLUGIN_FRONTEND_PORTS[@]}; i++ )); do
+    echo -n "-p ${PORTS[i]}:${PLUGIN_FRONTEND_PORTS[i]} "
   done
 }
 
@@ -269,7 +269,7 @@ service_unlink() {
 service_url() {
   local SERVICE="$1"
   local SERVICE_ALIAS="$(service_alias "$SERVICE")"
-  echo "$PLUGIN_SCHEME://$SERVICE_ALIAS:${PLUGIN_DATASTORE_PORTS[0]}"
+  echo "$PLUGIN_SCHEME://$SERVICE_ALIAS:${PLUGIN_FRONTEND_PORTS[0]}"
 }
 
 is_container_status () {
