@@ -34,7 +34,8 @@ case "$1" in
 
     dokku_log_info1 "Starting container"
     if [[ -n $KIBANA_CUSTOM_ENV ]]; then
-      echo "$KIBANA_CUSTOM_ENV" | tr ';' "\n" > "$SERVICE_ROOT/ENV" else
+      echo "$KIBANA_CUSTOM_ENV" | tr ';' "\n" > "$SERVICE_ROOT/ENV" 
+    else
       echo "" > "$SERVICE_ROOT/ENV"
     fi
     SERVICE_NAME=$(get_service_name "$SERVICE")
